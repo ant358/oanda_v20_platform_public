@@ -6,13 +6,11 @@ import pandas as pd
 from pandas import json_normalize
 import sqlalchemy as sq
 import requests
-from oanda.oanda import Account # oanda_v20_platform.
+from oanda.oanda import Account
 import os.path
 import logging
 from utils.fileops import get_abs_path 
 
-
-# TODO add updated to the database and have a check to update each day
 class MarketData(Account):
     """Creates a sqlite database of current market information - for use by the trading strategies.
         DB Browser https://sqlitebrowser.org/ can be used for easy viewing and filtering.
@@ -333,23 +331,6 @@ class MarketData(Account):
         df.open   = pd.to_numeric(df.open)
         return df
 
-
-    def usdx(prices):
-        """calculate the U.S. dollar index
-        Args: 
-        prices: dataframe, required
-        A single column df of prices indexed 
-        to the instrument code - run for o, h, l ,c
-        """
-        c = 50.14348112
-        euro  = prices.loc['EUR_USD']**-0.576
-        yen   = prices.loc['USD_JPY']**0.136
-        pound = prices.loc['GBP_USD']**-0.119
-        cad   = prices.loc['USD_CAD']**0.091
-        sek   = prices.loc['USD_SEK']**0.042
-        swiss = prices.loc['USD_CHF']**0.036
-
-        return c * euro * yen * pound * cad * sek * swiss
 
 if __name__=="__main__":
     os.chdir('..')

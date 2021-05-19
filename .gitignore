@@ -16,3 +16,5 @@ __pycache__/
 *.drawio
 # ingnore local environment settings
 .env
+# ignore scratchpad
+interactive_scratchpad.py
