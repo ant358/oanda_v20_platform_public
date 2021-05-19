@@ -16,3 +16,7 @@ __pycache__/
 *.drawio
 # ingnore local environment settings
 .env
+# pytest
+.pytest_cache
+# 
+interactive_scratchpad.py
