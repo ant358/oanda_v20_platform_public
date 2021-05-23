@@ -9,6 +9,8 @@
 from oanda.oanda import DataFeed
 from indicators.indicators import Indicator
 import logging
+import time
+from threading import Timer
 class price_printer(DataFeed):
 
     def __init__(self, **kwargs):
@@ -16,7 +18,56 @@ class price_printer(DataFeed):
         self.logger = logging.getLogger(__name__)
         # self.data0 = self.set_init_data0()
         self.set_indicators()
-        self.logger.info('\n-------- Price Printer Strategy Initialized -----------')
+
+        self.interval = 30 # seconds
+        self.running  = False 
+        self._timer   = None
+        try :
+            self.start() 
+            self.logger.info('\n--------  Price Printer Strategy Initialized use CTRL+C to stop-----------')
+            while True:
+                try:
+                    time.sleep(1)
+                except KeyboardInterrupt:
+                    self.logger.warning("Strategy Shutting down !")
+                    self.stop()
+                    break
+        except:
+            self.logger.exception("Strategy failed to start")
+
+
+    def __call__(self):
+        """
+        Handler function for calling the job function at each interval 
+        and continuing. 
+        """
+        self.running = False  # mark not running
+        self.start()          # reset the timer for the next go 
+        self.job()            # call the job function
+
+
+    def start(self):
+        """
+        Starts the interval and lets it run. 
+        """
+        if self.running:
+            # Don't start if already running! 
+            return 
+            
+        # Create the timer object, start and set state. 
+        self._timer = Timer(self.interval, self)
+        self._timer.start() 
+        self.running = True
+        
+
+    def stop(self):
+        """
+        Cancel the interval (no more job function calls).
+        """
+        if self._timer:
+            self._timer.cancel() 
+        self.running = False 
+        self._timer  = None
 
 
     def set_indicators(self):
@@ -34,5 +85,17 @@ class price_printer(DataFeed):
         self.logger.info(f" RSI: {self.rsi}")
         print('\n--------------------------- END OF NEXT --------------- \n')
 
+    # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATEGY):
+    def job(self):
+        # For localhost hardware performance testing - DigitalOcean does this natively
+        # check_cpu_usage() 
+        # check_memory_usage()
+        first_data_object = self.data0[0]
+        self.refresh_data()
+        updated_first_data_object = self.data0[0]
+        if first_data_object != updated_first_data_object:
+            self.__next__()
 
+if __name__=="__main__":
+    price_printer()
 

@@ -47,8 +47,8 @@ class MarketData(Account):
         3-4 days before a target will be hit. This column can be sorted to get a top 10 of instruments that 
         are efficeint to trade.
 
-        The asset class and base currency
-
+        The quote and base currency
+        https://www.investopedia.com/terms/b/basecurrency.asp
     Args:
         db_path str, default='data/marketdata.db': 
             The path to the database from the directory where this class is being run.
@@ -62,22 +62,16 @@ class MarketData(Account):
 
         # does the db exist if not create it by connecting
         if not os.path.isfile(self.db_path):
-            conn =  self.engine.connect()
-            conn.execute("commit")
-            conn.close()
-            self.logger.info(f"Empty MarketData database created at: {self.db_path}")
+            self.instruments = self.get_instruments()
+            self.build_db()
+            self.logger.info("Market data added to the database")
 
         # get todays date
         self.today = datetime.datetime.now().strftime('%Y-%m-%d')
         
-        try: # do we need to update marketdata?
-            sql = """SELECT DISTINCT(Updated) FROM marketdata;"""
-            data_date= pd.read_sql_query(sql, con=self.engine)
-
-        except: # only an empty db exists - build db
-            self.instruments = self.get_instruments()
-            self.build_db()
-            self.logger.info("Market data added to the database")
+        # do we need to update marketdata?
+        sql = """SELECT DISTINCT(Updated) FROM marketdata;"""
+        data_date= pd.read_sql_query(sql, con=self.engine)
 
         # is marketdata out of date?
         if data_date.loc[0].item() != self.today:
@@ -85,7 +79,7 @@ class MarketData(Account):
             self.build_db()
             self.logger.info("Market data updated in the database")
         
-        else: # get the marketdata
+        else: # get the marketdata - load some data into memory for use
             df = pd.read_sql_query(sql="""SELECT name, type, marginRate, N, avgSpread, 
                                                 "financing.longRate", "financing.shortRate",
                                                 "Spread % N"
@@ -98,9 +92,9 @@ class MarketData(Account):
 
 
     def get_core_assets(self):
-        df = pd.read_sql_query(sql="""SELECT DISTINCT "Base Currency", Asset FROM marketdata""", con=self.engine)
+        df = pd.read_sql_query(sql="""SELECT DISTINCT "Base Currency", Quote Currency FROM marketdata""", con=self.engine)
         base =set(df['Base Currency'].to_list())
-        asset =set(df['Asset'].to_list())
+        asset =set(df['Quote Currency'].to_list())
         base.update(asset)
         return list(base)
 
@@ -154,7 +148,7 @@ class MarketData(Account):
             
             df['Base Currency'] = df.apply(lambda x: self.base(x), axis=1)
             
-            df['Asset'] = df.apply(lambda x: self.asset(x), axis=1)
+            df['Quote Currency'] = df.apply(lambda x: self.quote(x), axis=1)
 
             df['Updated'] = self.today
             
@@ -163,11 +157,11 @@ class MarketData(Account):
        
     
     def base(self, x):
-        return x['name'].split('_')[1]
-
-
-    def asset(self, x):
         return x['name'].split('_')[0]
+
+
+    def quote(self, x):
+        return x['name'].split('_')[1]
 
     
     def get_instruments(self, params=None):

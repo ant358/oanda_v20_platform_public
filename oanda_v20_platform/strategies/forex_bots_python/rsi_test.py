@@ -14,20 +14,73 @@
 
 from oanda.oanda import DataFeed
 from indicators.indicators import Indicator
-# from notifier.system_logger import config_logger
 import logging
-
+import time
+# import schedule
+from threading import Timer
+    
 
 class rsi_test(DataFeed):
     
     def __init__(self, **kwargs):
+        """
+        Runs the strategy at a specified interval with given arguments.
+        """
         super(rsi_test, self).__init__(**kwargs)
         self.logger = logging.getLogger(__name__)
-        # self.data0 = self.set_init_data0()
         self.profit_target = 5
         self.loss_target = -5
         self.set_indicators()
-        self.logger.info('\n-------- RSI Test Strategy Initialized -----------')
+
+        self.interval = 30 # seconds
+        self.running  = False 
+        self._timer   = None
+        try :
+            self.start() 
+            self.logger.info('\n-------- RSI Test Strategy Initialized use CTRL+C to stop-----------')
+            while True:
+                try:
+                    time.sleep(1)
+                except KeyboardInterrupt:
+                    self.logger.warning("Strategy Shutting down !")
+                    self.stop()
+                    break
+        except:
+            self.logger.exception("Strategy failed to start")
+
+
+    def __call__(self):
+        """
+        Handler function for calling the job function at each interval 
+        and continuing. 
+        """
+        self.running = False  # mark not running
+        self.start()          # reset the timer for the next go 
+        self.job()            # call the job function
+
+
+    def start(self):
+        """
+        Starts the interval and lets it run. 
+        """
+        if self.running:
+            # Don't start if already running! 
+            return 
+            
+        # Create the timer object, start and set state. 
+        self._timer = Timer(self.interval, self)
+        self._timer.start() 
+        self.running = True
+        
+
+    def stop(self):
+        """
+        Cancel the interval (no more job function calls).
+        """
+        if self._timer:
+            self._timer.cancel() 
+        self.running = False 
+        self._timer  = None
 
 
     def set_indicators(self):
@@ -65,6 +118,18 @@ class rsi_test(DataFeed):
             if position_value >= self.profit_target or position_value <= self.loss_target:
                 order_id = matching_trades[0]['id']
                 self.close_trade(order_id)
+
+    # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATEGY):
+    def job(self):
+        # For localhost hardware performance testing - DigitalOcean does this natively
+        # check_cpu_usage() 
+        # check_memory_usage()
+        first_data_object = self.data0[0]
+        self.refresh_data()
+        updated_first_data_object = self.data0[0]
+        if first_data_object != updated_first_data_object:
+            self.__next__()
+    
 
 if __name__=="__main__":
     rsi_test()

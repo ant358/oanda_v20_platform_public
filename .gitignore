@@ -20,3 +20,4 @@ __pycache__/
 .pytest_cache
 # ignore scratchpad
 oanda_v20_platform/interactive_scratchpad.py
+# end
