@@ -71,8 +71,33 @@ class Account(Oanda):
 
         super().__init__(**kwargs)
         self.get_account()
-        self.get_account_balance()
-        
+        self.get_account_properties()
+
+    
+    def get_account_properties(self):
+        """Unpack the data returned by get_account"""
+        self.account_currency = self.account_info['account']['currency']
+        self.balance = self.account_info['account']['balance']
+        self.marginRate = self.account_info['account']['marginRate']
+        self.marginAvailable = self.account_info['account']['marginAvailable']
+        self.trades = self.account_info['account']['trades']
+        self.unrealizedPL = self.account_info['account']['unrealizedPL']
+        self.NAV = self.account_info['account']['NAV']
+        self.marginUsed = self.account_info['account']['marginUsed']
+        self.marginAvailable = self.account_info['account']['marginAvailable']
+        self.positionValue = self.account_info['account']['positionValue']
+        self.marginCloseoutPercent = self.account_info['account']['marginCloseoutPercent']
+        self.openTradeCount = self.account_info['account']['openTradeCount']
+        self.openPositionCount = self.account_info['account']['openPositionCount']
+        self.pendingOrderCount = self.account_info['account']['pendingOrderCount']
+        self.pl = self.account_info['account']['pl']
+        self.orders = self.account_info['account']['orders']
+
+    def set_account_properties(self):
+        """Used to refresh the account properties"""
+        self.get_account()
+        self.get_account_properties()
+
 
     def get_account(self):
         try:
@@ -88,13 +113,6 @@ class Account(Oanda):
         except:
             self.logger.exception(f"OANDA API ERROR - Account.get_account - failed to retrieve data ")
             
-
-    def get_account_balance(self):
-        try:
-            self.account_balance = self.account_info['account']['balance']
-        except:
-            self.logger.exception(f"OANDA API ERROR - Account.get_balance - failed to retrieve data ")
-
     
 
 class Order(Account):

@@ -57,8 +57,8 @@ class TestAccount():
         assert oanda.account == account_id, message3
 
     def test_account_balance(self):
-        message = f"There is no money in the account!! - balance returned = {acc.account_balance}"
-        assert float(acc.account_balance) > 0, message
+        message = f"There is no money in the account!! - balance returned = {acc.balance}"
+        assert float(acc.balance) > 0, message
 
 class TestOrder():
     pass

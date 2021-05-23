@@ -26,6 +26,7 @@ class MarketData(Account):
         And a summary table of market data (called marketdata) required for trading effectively, 
         which includes the following information:
         Trading costs such as financing rates and the days they are applied.
+            see https://www.oanda.com/uk-en/trading/financing-costs/
         Pip positions (decimal points) for each instrument 
         Margin rates
         Max and Min Trailing stop distances
@@ -36,6 +37,7 @@ class MarketData(Account):
             e.g. if spread is 20 and stop loss (SP) and take profit (TP) are 100 your trading edge has 
             to be able to overcome that ~20% cost to have any chance of succeeding - some of the instruments 
             with high spread % N are very hard (impossible) to trade profitably without a crystall ball.
+            see https://www1.oanda.com/forex-trading/analysis/spread-cost-calculator/
 
         The N per 100X spread provides a quick way to get the target trading range where the spread cost will 
         be ~1% e.g. US30_USD currently has a Nper100Spread of 1.92 and an N of 380 so if TP and SP are set to
@@ -94,10 +96,13 @@ class MarketData(Account):
                                  'financing.longRate', 'financing.shortRate',
                                  'Spread % N']].sort_values(by='Spread % N')
 
+
     def get_core_assets(self):
-        pass
-        self.core = pd.read_sql_query(sql="""SELECT DISTINCT Base Currency, Asset FROM marketdata""", con=self.engine)
-        self.core_list = self.core['Instrument'].to_list()
+        df = pd.read_sql_query(sql="""SELECT DISTINCT "Base Currency", Asset FROM marketdata""", con=self.engine)
+        base =set(df['Base Currency'].to_list())
+        asset =set(df['Asset'].to_list())
+        base.update(asset)
+        return list(base)
 
 
     def build_db(self):
@@ -336,3 +341,5 @@ if __name__=="__main__":
     os.chdir('..')
     market = MarketData()
 
+# calculate base currency per pip
+# account_info

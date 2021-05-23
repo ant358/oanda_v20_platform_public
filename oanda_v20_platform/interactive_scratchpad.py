@@ -7,3 +7,6 @@ data.pair
 from oanda.oanda import Account
 acc = Account()
 # %%
+from data.marketdata import MarketData
+md = MarketData()
+# %%
