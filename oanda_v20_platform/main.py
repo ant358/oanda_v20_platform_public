@@ -104,32 +104,9 @@ def run_strategy():
     except:
         logger.exception('Failed to load bot, check its name is correct')
 
-    # SETS THE BOT TRADING STRATEGY TO RUN WITH OANDA:
-    # strategy = 
+    # SETS THE BOT TRADING STRATEGY TO RUN WITH OANDA:S 
     bot_system(**systemkwargs)
 
-    # # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATEGY):
-    # def job():
-    #     # For localhost hardware performance testing - DigitalOcean does this natively
-    #     # check_cpu_usage() 
-    #     # check_memory_usage()
-    #     first_data_object = strategy.data0[0]
-    #     strategy.refresh_data()
-    #     updated_first_data_object = strategy.data0[0]
-    #     if first_data_object != updated_first_data_object:
-    #         strategy.__next__()
-
-
-    # # SETS SCHEDULER TO FETCH NEW DATA AND RUN STRATEGY INTERVALS:
-    # schedule.every(30).seconds.do(job)
-
-
-    # # KEEPS THE SYSTEM ONLINE INDEFINITELY WHILE MINIMIZING RESOURCE CONSUMPTION:
-    # while True:
-    #     schedule.run_pending()
-    #     # Comment this line out if you want to test server overloading and torture testing
-    #     time.sleep(1) 
-        
 
 # INITIALIZES ROBOT AND SCRIPTS  
 if __name__ == '__main__':
