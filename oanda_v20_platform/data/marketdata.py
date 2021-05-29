@@ -59,6 +59,8 @@ class MarketData(Account):
         # setup connection to the database
         self.db_path=db_path
         self.engine = sq.create_engine(f'sqlite:///{self.db_path}')
+        # get todays date
+        self.today = datetime.datetime.now().strftime('%Y-%m-%d')
 
         # does the db exist if not create it by connecting
         if not os.path.isfile(self.db_path):
@@ -66,8 +68,7 @@ class MarketData(Account):
             self.build_db()
             self.logger.info("Market data added to the database")
 
-        # get todays date
-        self.today = datetime.datetime.now().strftime('%Y-%m-%d')
+        
         
         # do we need to update marketdata?
         sql = """SELECT DISTINCT(Updated) FROM marketdata;"""
@@ -91,12 +92,14 @@ class MarketData(Account):
                                  'Spread % N']].sort_values(by='Spread % N')
 
 
-    def get_core_assets(self):
-        df = pd.read_sql_query(sql="""SELECT DISTINCT "Base Currency", Quote Currency FROM marketdata""", con=self.engine)
-        base =set(df['Base Currency'].to_list())
-        asset =set(df['Quote Currency'].to_list())
-        base.update(asset)
-        return list(base)
+    # def get_core_assets(self):
+    #     df = pd.read_sql_query(sql="""SELECT DISTINCT "Base Currency", Quote Currency FROM marketdata""", con=self.engine)
+    #     base =set(df['Base Currency'].to_list())
+    #     asset =set(df['Quote Currency'].to_list())
+    #     base.update(asset)
+    #     core_df = pd.DataFrame(columns=list(base))
+    #     return core_df
+
 
 
     def build_db(self):
@@ -229,14 +232,11 @@ class MarketData(Account):
         Returns:
             json: candle data
         """
-
-        yesterday = (datetime.datetime.now() - pd.DateOffset(days=1)).strftime("%Y-%m-%d")
-        last_candle = yesterday + 'T22:00:00.000000000Z'
+        # yesterday = (datetime.datetime.now() - pd.DateOffset(days=1)).strftime("%Y-%m-%d")
+        # last_candle = yesterday + 'T22:00:00.000000000Z'
         params = {
-                "to": last_candle,
                 "count": 60,
                 "granularity": "D",
-                # "includeFirst": True,
                 }
         url =  self.base_url +  f'/v3/instruments/{instrument}/candles/'
         r = requests.get(url, headers=self.headers, params=params)
@@ -259,9 +259,12 @@ class MarketData(Account):
         """
 
         df = json_normalize(candles_data.get('candles'))
+        # drop any incomplete candles
+        df = df[df['complete']==True].copy()
         df.rename(columns={'mid.c': 'close', 'mid.h': 'high', 
                             'mid.l': 'low', 'mid.o': 'open'}, 
                             inplace=True)
+        df.time = pd.to_datetime(df.time).dt.strftime("%Y-%m-%d")
         df.set_index('time', inplace=True)
         # the API returns strings these need to be converted to floats
         df.volume = pd.to_numeric(df.volume)
@@ -335,5 +338,3 @@ if __name__=="__main__":
     os.chdir('..')
     market = MarketData()
 
-# calculate base currency per pip
-# account_info

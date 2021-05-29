@@ -4,9 +4,9 @@
 
 ## Changes on fork ahead of the upstream remote  
 
-* added the marketdata.py module and database to collect and store market data for use developing and running trading strategies.  
+* added the marketdata.py module and database to collect and store market data. Use for developing and running trading strategies.  
   
-    DB Browser https://sqlitebrowser.org/ can be used for easy viewing and querying of the database.  Focused on daily data it incudes a table for every tradable instrument with:
+    DB Browser https://sqlitebrowser.org/ can be used for easy viewing and querying of the database.  Focused on daily data it includes a table for every tradable instrument with:
     * The Last 60 days of data
     * Yesterdays Volume, Open, High, Low, and Close
     * The 55 day Vol, O, H, L, C
@@ -44,10 +44,10 @@ Then used:
 * changed the name of setup folder to config so it does not clash with setup.py file
 * changed the class inheritance so the kwargs can be passed straight to the bot instance  
 * changed the class inheritance so subclasses are no longer called in the parent class
-* added import statements to the the strategies ```__init__.py``` to make bot import simpler  
+* added import statements to the strategies ```__init__.py``` to make bot import simpler  
 * changed the logging to update a file and report to the console with different levels of information  
   and removed the logging function and added the setup logging script to the start of main.py  
-  so its the first code to run   
+  so it's the first code to run   
 * added a datestamp to the log filenames   
 * added requirements.txt for local environment setup  
 * directory structure changed for pytest setup

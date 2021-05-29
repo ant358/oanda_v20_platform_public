@@ -375,17 +375,32 @@ class DataFeed(Order):
         # print(response.status_code)
         if response.status_code != 200:
             self.logger.debug("Bid stream bad response status {}".format(response.status))
-        for line in response.iter_lines():
-            if line:
-                try:
-                    line = line.decode('utf-8')
-                    msg = json.loads(line)
+        
+        lines = response.iter_lines()
+        # Save the first line for later or just skip it
+        next(lines)
+        last_bid = 0
+        for line in lines:
+            line = line.decode('utf-8')
+            msg = json.loads(line)
+            if 'bids' in msg:
+                self.bid = float(msg['bids'][0]['price'])
+                if self.bid != last_bid:
+                    print(self.bid)
+                last_bid = self.bid
+        
+        # for line in response.iter_lines():
+        #     if line:
+        #         try:
+        #             line = line.decode('utf-8')
+        #             msg = json.loads(line)
                 
-                except:
-                    self.logger.exception('Stream Failed') 
+        #         except:
+        #             self.logger.exception('Stream Failed') 
 
-                if 'bids' in msg:
-                    self.bid = float(msg['bids'][0]['price'])
+        #         if 'bids' in msg:
+        #             self.bid = float(msg['bids'][0]['price'])
+        #             return self.bid
 
 
     def ask_stream(self):

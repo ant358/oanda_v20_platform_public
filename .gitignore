@@ -20,4 +20,8 @@ __pycache__/
 .pytest_cache
 # ignore scratchpad
 oanda_v20_platform/interactive_scratchpad.py
+# ignore notes
+notes.md
+# ignore nbformat settings
+=4.2.0
 # end
