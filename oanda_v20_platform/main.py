@@ -2,7 +2,6 @@
 import logging
 from datetime import datetime
 from data.marketdata import MarketData
-from data.marketanalysis import NormaliseMarket
 import os
 from utils.fileops import get_abs_path
 
@@ -117,8 +116,6 @@ if __name__ == '__main__':
     try:
         # TODO schedule the rebuild of MarketData at the start of each day e.g. 00:01
         md = MarketData()
-        nm = NormaliseMarket()
-        nm.normalise()
 
     except:
         logger.exception("Failed to update market data")
