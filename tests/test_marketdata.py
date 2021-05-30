@@ -1,8 +1,9 @@
-
+from pandas import DataFrame
 import os
 from data.marketdata import MarketData
-# TODO breaks when running on CI - need to remove the ../
 md = MarketData()
+
+
 class TestMarketData():
 
     def test_db_exists(self):
@@ -13,11 +14,12 @@ class TestMarketData():
         x = md.get_instruments()
         message = "MarketData did not collect the instruments form Oanda"
         assert isinstance(x, dict), message
-        assert len(x) ==2, message
+        assert len(x) == 2, message
 
     def test_spreads(self):
         x = md.spreads('GBP_USD')
-        message = "The spread data was not returned correctly, check the spreads function "
+        message = ("The spread data was not returned correctly,"
+                   " check the spreads function ")
         assert isinstance(x, dict), message
         assert 'avg' in x.keys(), message
 
@@ -25,4 +27,21 @@ class TestMarketData():
         x = md.get_daily_candles(instrument='GBP_USD')
         message = "MarketData did not collect the candle data form Oanda"
         assert isinstance(x, dict), message
-        assert len(x) >1, message
+        assert len(x) > 1, message
+
+    def test_base(self):
+        df = DataFrame({'name': ['EUR_USD']})
+        x = md.base(df.loc[0])
+        message = ("Base function is not splitting the instrument correctly")
+        assert x == "EUR", message
+
+    def test_quote(self):
+        df = DataFrame({'name': ['EUR_USD']})
+        x = md.quote(df.loc[0])
+        message = "Quote function did not split the instrument correctly"
+        assert x == "USD", message
+
+    def test_avg_spreads(self):
+        x = md.avg_spread(md.spreads("EUR_USD"))
+        message = f"Average spread did not return an expected value: {x}"
+        assert isinstance(x, float), message

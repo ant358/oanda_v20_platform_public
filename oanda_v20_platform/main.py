@@ -1,11 +1,9 @@
-########## set up logging ###########################
+# set up logging
 import logging
 from datetime import datetime
 from data.marketdata import MarketData
-import os
 from utils.fileops import get_abs_path
 
-# from decouple import Config
 # get todays date
 datestamp = datetime.now().strftime('%Y%m%d')
 
@@ -33,7 +31,9 @@ ch = logging.StreamHandler()
 # set minimum output level
 ch.setLevel(logging.INFO)
 # create formatter
-formatter = logging.Formatter('[%(levelname)s] - %(asctime)s - %(name)s : %(message)s')
+formatter = logging.Formatter('[%(levelname)s] -'
+                              ' %(asctime)s - '
+                              '%(name)s : %(message)s')
 # add formatter
 file_logger.setFormatter(formatter)
 ch.setFormatter(formatter)
@@ -43,38 +43,33 @@ logger.addHandler(ch)
 # mark the run
 logger.info('Oanda_v20_platform Started')
 
-####################################################################################
+##############################################################################
 
 try:
     # import python modules and packages
-    import sys
-    # import time
-    # import schedule
     import importlib
-    import subprocess
     from io import StringIO
     from decouple import config
-except:
-    logger.exception('Failed to import python modules, is the environment correctly setup?')
+except Exception:
+    logger.exception("Failed to import python modules,"
+                     " is the environment correctly setup?")
 
 try:
     # import local modules
     from config.args import parse_args
-    from notifier.sms import TwilioSMS
     from notifier.email import send_email_notification
-    from utils.hardware_usage import check_memory_usage, check_cpu_usage
-    from data.marketdata import MarketData
-except:
-    logger.exception('Failed to import local modules, have the paths been changed?')
+except Exception:
+    logger.exception("Failed to import local modules,"
+                     " have the paths been changed?")
 
 try:
-    # import config ini 
     import configparser
     config_local = configparser.ConfigParser()
-    config_local.read(get_abs_path(['oanda_v20_platform', 'config', 'config.ini']))
-except:
-    logger.exception('Failed to import config file, has it been moved or edited?')
-
+    config_local.read(get_abs_path(['oanda_v20_platform',
+                                    'config', 'config.ini']))
+except Exception:
+    logger.exception("Failed to import config file,"
+                     " has it been moved or edited?")
 
 
 def run_strategy():
@@ -82,63 +77,69 @@ def run_strategy():
 
     # SETS UP BROKER CONFIGURATIONS:
     systemkwargs = dict(
-        token              = config('PRACTICE_TOKEN'), 
-        account            = config('PRACTICE_ACCOUNT'),
-        practice           = config_local.getboolean('Account', 'practice', fallback=False), 
-        pair               = args.pair, 
-        backfill           = config_local.getboolean('Trading', 'backfill', fallback=True),
-        text_notifications = config_local.getboolean('Twilio', 
-                            'text_notifications', fallback=False), 
-        recipient_number   = config_local.getint('Twilio', 'recipient_number', fallback=None),
-        twilio_number      = config_local.getint('Twilio', 
-                            'twilio_number', fallback=None),
-        twilio_sid         = config_local.get('Twilio', 
-                             'twilio_sid', fallback=None),
-        twilio_token       = config_local.get('Twilio', 
-                             'twilio_token', fallback=None),
+        token=config('PRACTICE_TOKEN'),
+        account=config('PRACTICE_ACCOUNT'),
+        practice=config_local.getboolean('Account', 'practice',
+                                         fallback=False),
+        pair=args.pair,
+        backfill=config_local.getboolean('Trading', 'backfill', fallback=True),
+        text_notifications=config_local.getboolean('Twilio',
+                                                   'text_notifications',
+                                                   fallback=False),
+        recipient_number=config_local.getint('Twilio',
+                                             'recipient_number',
+                                             fallback=None),
+        twilio_number=config_local.getint('Twilio',
+                                          'twilio_number', fallback=None),
+        twilio_sid=config_local.get('Twilio',
+                                    'twilio_sid', fallback=None),
+        twilio_token=config_local.get('Twilio',
+                                      'twilio_token', fallback=None),
                         )
 
-    # IMPORTS THE TRADING STRATEGY DYNAMICALLY BASED UPON THE ROBOT FILE NAME PASSED IN THE ARGS
+    # IMPORTS THE TRADING STRATEGY DYNAMICALLY
+    # BASED UPON THE ROBOT FILE NAME PASSED IN THE ARGS
     try:
         bot_system = getattr(importlib.import_module('strategies'), args.bot)
-    except:
+    except Exception:
         logger.exception('Failed to load bot, check its name is correct')
 
-    # SETS THE BOT TRADING STRATEGY TO RUN WITH OANDA:S 
+    # SETS THE BOT TRADING STRATEGY TO RUN WITH OANDA
     bot_system(**systemkwargs)
 
 
-# INITIALIZES ROBOT AND SCRIPTS  
+# INITIALIZES ROBOT AND SCRIPTS
 if __name__ == '__main__':
-    
-    #################################################################################
-    # update market data 
+
+    ###########################################################################
+    # update market data
     try:
-        # TODO schedule the rebuild of MarketData at the start of each day e.g. 00:01
+        # TODO schedule the rebuild of MarketData at the start of
+        # each day e.g. 00:01
         md = MarketData()
 
-    except:
+    except Exception:
         logger.exception("Failed to update market data")
-
 
     try:
         args = parse_args()
         if config_local.get('Email', 'email_to', fallback=None):
-            email_subject = f'Python Bot Stared --- {args.pair} --- {args.bot}' 
+            email_subject = f'Python Bot Stared --- {args.pair} --- {args.bot}'
             email_body = 'System is online'
             send_email_notification(
-                config_local.get('Email','gmail_server_account', fallback=None),
-                config_local.get('Email','gmail_server_password', fallback=None),
-                config_local.get('Email', 'email_to', fallback=None), 
-                email_subject, 
+                config_local.get('Email', 'gmail_server_account',
+                                 fallback=None),
+                config_local.get('Email', 'gmail_server_password',
+                                 fallback=None),
+                config_local.get('Email', 'email_to', fallback=None),
+                email_subject,
                 email_body
             )
 
         run_strategy()
-        
 
 # GRACEFUL EXIT ON PROGRAM CRASH WITH EMAIL NOTIFICATION OF FAILURE REASON
-    except:
+    except Exception:
         logger.exception('Failed to run strategy')
 
     if config_local.get('Email', 'email_to', fallback=None):
@@ -147,10 +148,10 @@ if __name__ == '__main__':
         email_subject = f'Python Bot STOPPED! --- {args.pair} --- {args.bot}'
         email_body = log_stream.getvalue()
         send_email_notification(
-            config_local.get('Email','gmail_server_account', fallback=None),
-            config_local.get('Email','gmail_server_password', fallback=None),
-            config_local.get('Email', 'email_to', fallback=None),  
-            email_subject, 
+            config_local.get('Email', 'gmail_server_account', fallback=None),
+            config_local.get('Email', 'gmail_server_password', fallback=None),
+            config_local.get('Email', 'email_to', fallback=None),
+            email_subject,
             email_body
         )
     logger.info('Strategy Run over exit main.py!')

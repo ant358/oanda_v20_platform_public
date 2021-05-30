@@ -1,15 +1,12 @@
-import logging
 import smtplib
-from io import StringIO
-from email import encoders
-from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
-def send_email_notification(from_email, server_password, recipient, subject, message):
+def send_email_notification(from_email, server_password,
+                            recipient, subject, message):
 
-    # BUILD THE EMAIL 
+    # BUILD THE EMAIL
     msg = MIMEMultipart()
     msg['From'] = from_email
     msg['To'] = recipient

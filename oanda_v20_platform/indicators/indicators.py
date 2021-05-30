@@ -4,6 +4,7 @@ import requests
 # from notifier.system_logger import config_logger
 import logging
 
+
 class Indicator:
     def __init__(self):
         self.indicator_base_url = 'http://api.fxhistoricaldata.com/indicators?'
@@ -12,7 +13,7 @@ class Indicator:
     def sma(self, data, period, ba, ohlc):
         series_arr = []
         for item in data[:period]:
-            value = round(float(item[ba][ohlc]),5)
+            value = round(float(item[ba][ohlc]), 5)
             series_arr.append(value)
         DATA = np.array(series_arr)
         sma = ti.sma(DATA, period=period)
@@ -22,14 +23,13 @@ class Indicator:
         try:
             exp = f"{ohlc},rsi({ohlc},{period})"
             params = {
-                'expression' : exp,
-                'instruments' : pair,
-                'timeframe' : timeframe,
-                'item_count' : 3
+                'expression': exp,
+                'instruments': pair,
+                'timeframe': timeframe,
+                'item_count': 3
             }
-            r = requests.get(self.indicator_base_url, 
-                params=params 
-            )
+            r = requests.get(self.indicator_base_url,
+                             params=params)
             data = r.json()
 
             rsi_results_array = data['results'][pair]['data']
@@ -37,5 +37,5 @@ class Indicator:
             for rsi_bar in rsi_results_array:
                 rsi_data.append(rsi_bar[-1])
             return rsi_data
-        except:
+        except Exception:
             self.logger.exception('Failed to get RSI Indicator')
