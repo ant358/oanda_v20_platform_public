@@ -19,5 +19,5 @@ def parse_args(pargs=None):
     if pargs is not None:
         return parser.parse_args(pargs)
 
-    else:
-        logger.warning("Required args --bot and pair not set correctly")
+    return parser.parse_args(pargs)
+
