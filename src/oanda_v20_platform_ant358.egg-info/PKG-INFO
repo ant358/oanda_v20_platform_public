@@ -1,3 +1,24 @@
+Metadata-Version: 2.1
+Name: oanda-v20-platform-ant358
+Version: 0.1.0
+Summary: A platform to enable automated trading and market analysis with Python on the Oanda brokerage API
+Home-page: https://github.com/ant358/oanda_v20_platform_public
+Author: Eric Lingren, Anthony Wynne
+Author-email: 12174019+ant358@users.noreply.github.com
+License: BSD 4-Clause License
+Project-URL: Bug Tracker, https://github.com/ant358/oanda_v20_platform_public/issues
+Project-URL: Upstream Remote, https://github.com/Eric-Lingren/oanda_v20_platform_public
+Keywords: python,finance,oanda,trading,forex,cfd
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3.7
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 [![Build Status](https://travis-ci.com/ant358/oanda_v20_platform_public.svg?branch=master)](https://travis-ci.com/ant358/oanda_v20_platform_public)
 [![codecov](https://codecov.io/gh/ant358/oanda_v20_platform_public/branch/master/graph/badge.svg)](https://codecov.io/gh/ant358/oanda_v20_platform_public)
 # Automated Trading Platform that runs on Oanda  
@@ -79,3 +100,5 @@ _Trading foreign exchange carries a high level of risk, and may not be suitable 
 _I take no responsibility for any losses or gains you may incur from using my software. I also take no responsibility for any architecture, security, or server configurations._   
 \
 _This software is provided as is. No warranties or guarantees will be provided for its accuracy, completeness, reliability, or security if used within your own environment._
+
+

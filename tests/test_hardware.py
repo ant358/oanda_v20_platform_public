@@ -1,4 +1,4 @@
-from utils.hardware_usage import check_memory_usage, check_cpu_usage
+from oanda_v20_platform.utils.hardware_usage import check_memory_usage, check_cpu_usage
 import socket
 import pytest
 
@@ -18,13 +18,10 @@ def test_memory_useage_stats():
 
 def test_internet_connection():
     message = "No connection to the internet, could not reach 1.1.1.1"
-    with pytest.raises(Exception) as execinfo:   
+    with pytest.raises(Exception) as execinfo:
         host = socket.gethostbyname("one.one.one.one")
         s = socket.create_connection((host, 80), 2)
         s.close()
         raise Exception(message)
 
     assert execinfo.value.args[0] == message
-  
-      
-    

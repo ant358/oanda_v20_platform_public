@@ -1,5 +1,5 @@
 import logging
-import main
+import oanda_v20_platform.main as main
 
 
 def test_logging(caplog):

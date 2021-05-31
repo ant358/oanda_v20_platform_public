@@ -1,6 +1,6 @@
 from pandas import DataFrame
 import os
-from data.marketdata import MarketData
+from oanda_v20_platform.data.marketdata import MarketData
 md = MarketData()
 
 

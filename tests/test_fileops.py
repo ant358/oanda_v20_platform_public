@@ -1,5 +1,5 @@
-from utils.fileops import get_abs_path
-from pathlib import Path
+from oanda_v20_platform.utils.fileops import get_abs_path
+
 
 def test_get_abs_path():
 

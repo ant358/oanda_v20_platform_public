@@ -16,6 +16,7 @@ __pycache__/
 *.drawio
 # ingnore local environment settings
 .env
+.pypirc
 # pytest
 .pytest_cache
 # ignore scratchpad

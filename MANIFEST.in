@@ -1,0 +1,3 @@
+exclude logs/*.txt
+
+include pyproject.toml

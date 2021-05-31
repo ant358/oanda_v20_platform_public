@@ -1,5 +1,5 @@
 # import pytest
-from oanda.oanda import Oanda, Order, Account, DataFeed
+from oanda_v20_platform.oanda.oanda import Oanda, Order, Account, DataFeed
 
 oanda = Oanda()
 oanda_live = Oanda(practice=False)
