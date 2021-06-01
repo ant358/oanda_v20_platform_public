@@ -1,16 +1,17 @@
+# %%
 # set up logging
 import logging
 from datetime import datetime
 from oanda_v20_platform.data.marketdata import MarketData
 from oanda_v20_platform.utils.fileops import get_abs_path
-
+# %%
 # get todays date
 datestamp = datetime.now().strftime('%Y%m%d')
 
 # append date to logfile name
 log_name = f'log-{datestamp}.txt'
 # path = './logs/'
-log_filename = get_abs_path(['src', 'oanda_v20_platform', 'logs', log_name])
+log_filename = get_abs_path(['logs', log_name])
 # print(log_filename)
 # create log if it does not exist
 if not log_filename.exists():
@@ -26,6 +27,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 # Set up the file handler
 file_logger = logging.FileHandler(log_filename)
+
 # create console handler and set level to debug
 ch = logging.StreamHandler()
 # set minimum output level
@@ -155,4 +157,3 @@ if __name__ == '__main__':
             email_body
         )
     logger.info('Strategy Run over, exit main.py!')
-

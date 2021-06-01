@@ -1,3 +1,4 @@
+
 import datetime
 import numpy as np
 import pandas as pd
@@ -330,5 +331,6 @@ class MarketData(Account):
 
 
 if __name__ == "__main__":
-    os.chdir('..')
+    ## os.chdir('..')
     market = MarketData()
+
