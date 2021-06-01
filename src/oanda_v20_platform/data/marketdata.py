@@ -1,3 +1,4 @@
+
 import datetime
 import numpy as np
 import pandas as pd
@@ -60,8 +61,7 @@ class MarketData(Account):
             The path to the database from the directory
              where this class is being run.
     """
-    def __init__(self, db_path=get_abs_path(['src', 'oanda_v20_platform',
-                                            'data', 'marketdata.db']),
+    def __init__(self, db_path=get_abs_path(['data', 'marketdata.db']),
                  **kwargs):
         super().__init__(**kwargs)
         self.logger = logging.getLogger(__name__)
@@ -331,5 +331,6 @@ class MarketData(Account):
 
 
 if __name__ == "__main__":
-    os.chdir('..')
+    ## os.chdir('..')
     market = MarketData()
+

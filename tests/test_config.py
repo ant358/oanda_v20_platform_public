@@ -12,7 +12,6 @@ def test_args():
 
 def test_config_ini():
     config_local = configparser.ConfigParser()
-    config_local.read(get_abs_path(['src', 'oanda_v20_platform',
-                                    'config', 'config.ini']))
+    config_local.read(get_abs_path(['config', 'config.ini']))
     message = "Cant read config.ini file with config parser"
     assert config_local.getboolean('Other', 'test'), message

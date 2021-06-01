@@ -1,21 +1,22 @@
+# %%
 # set up logging
 import logging
 from datetime import datetime
 from oanda_v20_platform.data.marketdata import MarketData
 from oanda_v20_platform.utils.fileops import get_abs_path
-
+# %%
 # get todays date
 datestamp = datetime.now().strftime('%Y%m%d')
 
 # append date to logfile name
 log_name = f'log-{datestamp}.txt'
 # path = './logs/'
-log_filename = get_abs_path(['src', 'oanda_v20_platform', 'logs', log_name])
+log_filename = get_abs_path(['logs', log_name])
 # print(log_filename)
 # create log if it does not exist
 if not log_filename.exists():
     # check the  logs dir exists - create it
-    get_abs_path(['src', 'oanda_v20_platform', 'logs']).mkdir(exist_ok=True)
+    get_abs_path(['logs']).mkdir(exist_ok=True)
     # create the file
     log_filename.touch(exist_ok=True)
 
@@ -26,6 +27,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 # Set up the file handler
 file_logger = logging.FileHandler(log_filename)
+
 # create console handler and set level to debug
 ch = logging.StreamHandler()
 # set minimum output level
@@ -65,8 +67,7 @@ except Exception:
 try:
     import configparser
     config_local = configparser.ConfigParser()
-    config_local.read(get_abs_path(['src', 'oanda_v20_platform',
-                                    'config', 'config.ini']))
+    config_local.read(get_abs_path(['config', 'config.ini']))
 except Exception:
     logger.exception("Failed to import config file,"
                      " has it been moved or edited?")
@@ -156,4 +157,3 @@ if __name__ == '__main__':
             email_body
         )
     logger.info('Strategy Run over, exit main.py!')
-

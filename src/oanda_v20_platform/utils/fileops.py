@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-def get_abs_path(pathlist=['src', 'oanda_v20_platform', 'data', 'marketdata.db']):
+def get_abs_path(pathlist=['data', 'marketdata.db']):
     """To solve the problem of finding files with relative
     paths on windows/linux/mac etc. esp when a module has been
     imported into a different working directory
@@ -19,10 +19,28 @@ def get_abs_path(pathlist=['src', 'oanda_v20_platform', 'data', 'marketdata.db']
     cwd = p.cwd()
     # get the dir tree
     tree = list(cwd.parts)
-    # shorten it to the oanda_v20_platform root
-    tree = tree[:tree.index('oanda_v20_platform_public')+1]
-    for x in pathlist:
-        tree.append(x)
-    newpath = Path(*tree)
+    # print("Total tree: ", tree)
+    if 'oanda_v20_platform' in tree:
+        # shorten it to the oanda_v20_platform root
+        tree = tree[:tree.index('oanda_v20_platform')+1]
+        for x in pathlist:
+            tree.append(x)
+        newpath = Path(*tree)
+
+    else:
+        # shorten tree and try to find oanda_v20_platfrom
+        tree = tree[:-1]
+        shortpath = Path(*tree)
+        nextpath = list(shortpath.glob('**/oanda_v20_platform/'))[-1]
+        newtree = list(nextpath.parts)
+        if 'oanda_v20_platform' in newtree:
+            newtree = newtree[:newtree.index('oanda_v20_platform')+1]
+            for x in pathlist:
+                newtree.append(x)
+            newpath = Path(*newtree)
+        else:
+            message = ("Can't find the right files,"
+                       " check installation")
+            raise FileNotFoundError(message)
 
     return newpath.absolute()

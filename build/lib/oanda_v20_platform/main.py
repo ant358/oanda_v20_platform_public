@@ -15,7 +15,7 @@ log_filename = get_abs_path(['src', 'oanda_v20_platform', 'logs', log_name])
 # create log if it does not exist
 if not log_filename.exists():
     # check the  logs dir exists - create it
-    get_abs_path(['src', 'oanda_v20_platform', 'logs']).mkdir(exist_ok=True)
+    get_abs_path(['logs']).mkdir(exist_ok=True)
     # create the file
     log_filename.touch(exist_ok=True)
 
@@ -65,8 +65,7 @@ except Exception:
 try:
     import configparser
     config_local = configparser.ConfigParser()
-    config_local.read(get_abs_path(['src', 'oanda_v20_platform',
-                                    'config', 'config.ini']))
+    config_local.read(get_abs_path(['config', 'config.ini']))
 except Exception:
     logger.exception("Failed to import config file,"
                      " has it been moved or edited?")
