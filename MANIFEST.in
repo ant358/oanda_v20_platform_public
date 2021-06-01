@@ -1,3 +1,3 @@
-exclude logs/*.txt
-include config/config.ini
+exclude src/oanda_v20_platform/logs/*.txt
+include src/oanda_v20_platform/config/config.ini
 include pyproject.toml
